@@ -1,0 +1,71 @@
+{
+	"info": {
+		"_postman_id": "1d6da6fc-5ff2-4225-b1e4-92054a405c0c",
+		"name": "Lab8",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33669280"
+	},
+	"item": [
+		{
+			"name": "Обновить значение",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"value\": 123,\r\n    \"access_key\": 123\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/depreciations/1/update_summ/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"depreciations",
+						"1",
+						"update_summ",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Определить значение",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"depreciation_id\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/calculate_summ/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"calculate_summ",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
