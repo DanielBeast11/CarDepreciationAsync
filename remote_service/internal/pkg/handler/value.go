@@ -4,19 +4,26 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"math/rand"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ValueRequest struct {
-	AccessKey int64  `json:"access_key"`
-	Value int `json:"value"`
+	AccessKey int64 `json:"access_key"`
+	Value     int   `json:"value"`
 }
 
 type Request struct {
 	DepreciationId int64 `json:"depreciation_id"`
+	Mileage        int   `json:"mileage"`
+	InitialPrice   int   `json:"initial_price"`
+}
+
+type DepreciationData struct {
+	Mileage      int `json:"mileage"`
+	InitialPrice int `json:"initial_price"`
 }
 
 func (h *Handler) issueValue(c *gin.Context) {
@@ -25,7 +32,8 @@ func (h *Handler) issueValue(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	fmt.Println("handler.issueValue:", input)
+	fmt.Printf("handler.issueValue: DepreciationId=%d, Mileage=%d, InitialPrice=%d\n",
+		input.DepreciationId, input.Mileage, input.InitialPrice)
 
 	c.Status(http.StatusOK)
 
@@ -36,15 +44,19 @@ func (h *Handler) issueValue(c *gin.Context) {
 }
 
 func sendValueRequest(request Request) {
+	var value int
 
-	var value = -1
-	if rand.Intn(10) % 10 >= 3 {
-	 value = 100 * rand.Intn(10000)
+	// Вычисляем значение по формуле (mileage * initial_price) / 500000
+	if request.Mileage > 0 && request.InitialPrice > 0 {
+		// Умножаем перед делением для сохранения точности
+		value = (request.Mileage * request.InitialPrice) / 500000
+		fmt.Printf("Расчет по формуле: (%d * %d) / 500000 = %d\n",
+			request.Mileage, request.InitialPrice, value)
 	}
 
 	answer := ValueRequest{
 		AccessKey: 123,
-		Value: value,
+		Value:     value,
 	}
 
 	client := &http.Client{}
@@ -55,7 +67,6 @@ func sendValueRequest(request Request) {
 	requestURL := fmt.Sprintf("http://django:8000/api/depreciations/%d/update_summ/", request.DepreciationId)
 
 	req, _ := http.NewRequest(http.MethodPut, requestURL, bodyReader)
-
 	req.Header.Set("Content-Type", "application/json")
 
 	response, err := client.Do(req)
